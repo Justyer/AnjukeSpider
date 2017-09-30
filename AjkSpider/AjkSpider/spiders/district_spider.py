@@ -13,10 +13,10 @@ class DistrictSpider(CrawlSpider):
     start_urls = []
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES':{
-        #    'AjkSpider.middlewares.ProxyMiddleware': 202,
+           'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
+        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         #    'AjkSpider.pipelines.JsonPipeline': 301,
         }
     }
@@ -24,7 +24,7 @@ class DistrictSpider(CrawlSpider):
     def start_requests(self):
         id_url = Mysql().query_by_sql('''
                     select id,url
-                    from ajk_city
+                    from t_web_ajk_city
                 ''')
         for one in id_url:
             yield Request(
