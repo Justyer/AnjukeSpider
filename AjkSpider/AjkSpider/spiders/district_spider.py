@@ -16,8 +16,7 @@ class DistrictSpider(CrawlSpider):
            'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
-        #    'AjkSpider.pipelines.JsonPipeline': 301,
+           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         }
     }
 
@@ -32,23 +31,8 @@ class DistrictSpider(CrawlSpider):
                 meta={'id': one['id']},
                 callback=self.get_district
             )
-        # yield Request(
-        #     'https://beijing.anjuke.com/community/?from=navigation',
-        #     meta={'id': 1},
-        #     callback=self.get_district,
-        #     dont_filter=True
-        # )
 
     def get_district(self, response):
-        # cn_name = Selector(response).xpath('/html/body/div[3]/div[1]/dl[2]/dd/div/div/a/text()').extract()
-        # route = Selector(response).xpath('/html/body/div[3]/div[1]/dl[2]/dd/div/div/a/@href').extract()
-        # item = DistrictItem()
-        # for n, r in zip(cn_name, route):
-        #     item['cn_name'] = n
-        #     item['route'] = r.split('/')[2]
-        #     item['city_id'] = response.request.meta['id']
-        #     yield item
-
         cn_name = Selector(response).xpath('/html/body/div[5]/div[2]/div[1]/span[2]/a/text()').extract()
         route = Selector(response).xpath('/html/body/div[5]/div[2]/div[1]/span[2]/a/@href').extract()
         item = DistrictItem()

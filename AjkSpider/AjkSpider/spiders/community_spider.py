@@ -14,7 +14,7 @@ class CommunitySpider(CrawlSpider):
     start_urls = []
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES':{
-           'AjkSpider.middlewares.ProxyMiddleware': 202,
+        #    'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
            'AjkSpider.pipelines.InsertMysqlPipeline': 300,
