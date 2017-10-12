@@ -37,12 +37,19 @@
 # day_space = (latest_date - old_latest_date).days
 # print old_latest_date, latest_date, day_space
 
-import csv
-import codecs
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
+# import csv
+# import codecs
+# import sys
+# reload(sys)
+# sys.setdefaultencoding("utf-8")
+#
+# csv_reader = csv.DictReader(codecs.open('../esf_irt_20170922.csv', 'r', encoding='utf-8'))
+# for row in csv_reader:
+#     print 'f:', row['residence_url']
 
-csv_reader = csv.DictReader(codecs.open('../esf_irt_20170922.csv', 'r', encoding='utf-8'))
-for row in csv_reader:
-    print 'f:', row['residence_url']
+import re
+
+s = '房屋编码： 976194196，发布时间：2017年09月21日'
+
+rec = re.compile(r'\d+')
+print rec.findall(s)

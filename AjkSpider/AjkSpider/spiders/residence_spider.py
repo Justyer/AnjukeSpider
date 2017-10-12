@@ -17,14 +17,13 @@ class ResidenceSpider(CrawlSpider):
     name = 'ajk_get_residence'
     start_urls = []
     custom_settings = {
-        'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_residence_irt_%s.csv' % datetime.date.today(),
-        'JOBDIR': '/usr/local/crawler/dxc/common/ajk/crawls/ajk_residence_irt_%s' % datetime.date.today(),
-        'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_residence_irt_%s.log' % datetime.date.today(),
+        # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_residence_irt_%s.csv' % datetime.date.today(),
+        # 'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_residence_irt_%s.log' % datetime.date.today(),
         'DOWNLOADER_MIDDLEWARES':{
             'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
+           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         }
     }
 
@@ -38,7 +37,7 @@ class ResidenceSpider(CrawlSpider):
         for one_d in q_result:
             yield Request(
                 one_d['url'] + 'community/' + one_d['route'] + '/',
-                meta={'id': one_d['id'], 'url': one_d['url']}
+                meta={'id': one_d['id'], 'url': one_d['url']},
                 callback=self.get_residence_url
             )
 
