@@ -12,6 +12,7 @@ from scrapy.http import Request
 
 from AjkSpider.items import *
 from AjkSpider.Db.Mysql import *
+from AjkSpider.Exception import tryex
 
 class ResidenceSpider(CrawlSpider):
     name = 'ajk_get_residence'
