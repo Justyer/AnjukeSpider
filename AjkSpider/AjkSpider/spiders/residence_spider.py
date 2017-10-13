@@ -1,13 +1,10 @@
 #-*- encoding:utf-8 -*-
 
 import re
-import time
 import datetime
-import psycopg2
 
 from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
-from scrapy.loader import ItemLoader
 from scrapy.http import Request
 
 from AjkSpider.items import *
@@ -18,57 +15,64 @@ class ResidenceSpider(CrawlSpider):
     name = 'ajk_get_residence'
     start_urls = []
     custom_settings = {
+        'JOBDIR': 'crawls/just_maker',
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_residence_irt_%s.csv' % datetime.date.today(),
         # 'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_residence_irt_%s.log' % datetime.date.today(),
         'DOWNLOADER_MIDDLEWARES':{
-            'AjkSpider.middlewares.ProxyMiddleware': 202,
+            # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
            'AjkSpider.pipelines.InsertMysqlPipeline': 300,
-        }
+        },
+        'DOWNLOAD_DELAY': 0
     }
 
     def start_requests(self):
         q_result = Mysql().query_by_sql('''
-                            select co.id,co.route,ci.url
+                            select ci.cn_name,co.route,ci.url
                             from t_web_ajk_community co,t_web_ajk_district di,t_web_ajk_city ci
-                            where co.district_id=di.id and di.city_id=ci.id;
+                            where co.district_id=di.id and di.city_id=ci.id
                         ''')
 
         for one_d in q_result:
             yield Request(
                 one_d['url'] + 'community/' + one_d['route'] + '/',
-                meta={'id': one_d['id'], 'url': one_d['url']},
-                callback=self.get_residence_url
+                meta={'city': one_d['cn_name'], 'url': one_d['url']},
+                callback=self.get_residence_url,
+                dont_filter=True
             )
 
     def get_residence_url(self,response):
         urls = Selector(response).xpath('//*[@_soj="xqlb"]/@link').extract()
         for url in urls:
             yield Request(
-                response.request.meta['url'] + url[0:-1] + '?from=Filter_1&hfilter=filterlist',
-                meta=response.request.meta,
-                callback=self.get_residence_info
+                response.request.meta['url'] + url[1:-1] + '?from=Filter_1&hfilter=filterlist',
+                meta={'city': response.request.meta['city']},
+                callback=self.get_residence_info,
+                dont_filter=True
             )
+
         next_page_url = Selector(response).xpath('//*[@class="aNxt"]/@href').extract_first()
         if next_page_url is not None:
             yield Request(
                 next_page_url,
-                meta=response.request.meta,
-                callback=self.get_residence_url
+                meta={'city': response.request.meta['city'], 'url': response.request.meta['url']},
+                callback=self.get_residence_url,
+                dont_filter=True
             )
 
     def get_residence_info(self, response):
         sr = Selector(response)
         item = ResidenceItem()
         item['residence_name']    = tryex.strip(sr.xpath('//*[@id="content"]/div[3]/div[1]/h1/text()').extract_first())
-        item['avg_price']         = sr.xpath('//*[@id="basic-infos-box"]/div[1]/span[1]/text()').extract_first()
+        try:
+            item['avg_price']     = sr.re(r'"comm_midprice":"(\d+)"')[0]
+        except:
+            item['avg_price']     = None
 
-        qushi = sr.xpath('//*[@id="basic-infos-box"]/div[1]/span[2]/i/text()').extract_first()
-        num = sr.xpath('//*[@id="basic-infos-box"]/div[1]/span[2]/text()').extract_first()
-        item['compare_pre_month'] = qushi + num
+        address = sr.xpath('//*[@class="sub-hd"]/text()').extract_first()
+        item['address']           = address
 
-        item['address']           = sr.xpath('//*[@class="sub-hd"]/text()').extract_first()
         item['build_time']        = sr.xpath('//*[@id="basic-infos-box"]/dl/dd[5]/text()').extract_first()
         item['property_type']     = sr.xpath('//*[@id="basic-infos-box"]/dl/dd[1]/text()').extract_first()
         item['property_price']    = sr.xpath('//*[@id="basic-infos-box"]/dl/dd[2]/text()').extract_first()
@@ -85,5 +89,8 @@ class ResidenceSpider(CrawlSpider):
         item['url']               = response.url
         item['webst_nm']          = u'安居客'
         item['crawl_time']        = datetime.datetime.now().strftime('%Y-%m-%d %X')
-        item['community_id']      = response.request.meta['id']
+        item['city']              = response.request.meta['city']
+        item['district']          = address.split('-')[0]
+        item['community']         = address.split('-')[1]
+
         yield item

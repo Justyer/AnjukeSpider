@@ -39,7 +39,6 @@ class ResidenceItem(scrapy.Item):
 
     residence_name    = scrapy.Field()
     avg_price         = scrapy.Field()
-    compare_pre_month = scrapy.Field()
     address           = scrapy.Field()
     build_time        = scrapy.Field()
     property_type     = scrapy.Field()
@@ -56,6 +55,9 @@ class ResidenceItem(scrapy.Item):
     url               = scrapy.Field()
     webst_nm          = scrapy.Field()
     crawl_time        = scrapy.Field()
+    city              = scrapy.Field()
+    district          = scrapy.Field()
+    community         = scrapy.Field()
     community_id      = scrapy.Field()
 
 class EsfItem(scrapy.Item):
@@ -65,6 +67,7 @@ class EsfItem(scrapy.Item):
     orientation       = scrapy.Field()
     area              = scrapy.Field()
     decoration        = scrapy.Field()
+    address           = scrapy.Field()
     floor             = scrapy.Field()
     total_floor       = scrapy.Field()
 

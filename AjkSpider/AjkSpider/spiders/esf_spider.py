@@ -1,12 +1,10 @@
 #-*- encoding:utf-8 -*-
 
 import re
-import time
 import datetime
 
 from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
-from scrapy.loader import ItemLoader
 from scrapy.http import Request
 
 from AjkSpider.items import *
@@ -58,15 +56,13 @@ class EsfSpider(CrawlSpider):
             )
 
     def get_esf_info(self, response):
-        print 'Url:', response.url
-
         sr = Selector(response)
         item = EsfItem()
         item['structure']         = sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/a/@href' % u'小区：').extract_first()
         item['orientation']       = sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/text()' % u'朝向：').extract_first()
         item['area']              = sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/text()' % u'面积：').extract_first()
         item['decoration']        = sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/text()' % u'装修程度：').extract_first()
-        print 'sdaf:', item
+
         rec = re.compile(r'\d+')
         fl = tryex.strip(sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/text()' % u'楼层：').extract_first()).split('(')
     	if len(fl) == 2:
