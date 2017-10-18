@@ -16,7 +16,7 @@ class EsfSpider(CrawlSpider):
     start_urls = []
     custom_settings = {
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_esf_irt_%s.csv' % datetime.date.today(),
-        # 'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_esf_irt_%s.log' % datetime.date.today(),
+        'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_esf_irt_%s.log' % datetime.date.today(),
         'DOWNLOADER_MIDDLEWARES':{
             # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
