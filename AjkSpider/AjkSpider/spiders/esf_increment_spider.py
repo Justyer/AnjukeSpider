@@ -22,7 +22,7 @@ class EsfIrtSpider(CrawlSpider):
             # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
+        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
         'LOG_LEVEL': 'INFO',
         'DOWNLOAD_DELAY': 0.03

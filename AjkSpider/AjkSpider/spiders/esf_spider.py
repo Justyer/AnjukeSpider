@@ -24,6 +24,7 @@ class EsfSpider(CrawlSpider):
            'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
         # 'LOG_LEVEL': 'INFO',
+        'REDIRECT_ENABLED': False,
         'DOWNLOAD_DELAY': 5
     }
 
