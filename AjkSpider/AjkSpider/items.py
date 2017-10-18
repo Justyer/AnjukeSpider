@@ -40,6 +40,8 @@ class ResidenceItem(scrapy.Item):
     residence_name    = scrapy.Field()
     avg_price         = scrapy.Field()
     address           = scrapy.Field()
+    lat               = scrapy.Field()
+    lng               = scrapy.Field()
     build_time        = scrapy.Field()
     property_type     = scrapy.Field()
     property_price    = scrapy.Field()

@@ -15,7 +15,7 @@ class ResidenceSpider(CrawlSpider):
     name = 'ajk_get_residence'
     start_urls = []
     custom_settings = {
-        'JOBDIR': 'crawls/just_maker',
+        'JOBDIR': '/mnt/d/workspace/www/crawls/just_maker2-2',
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_residence_irt_%s.csv' % datetime.date.today(),
         # 'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_residence_irt_%s.log' % datetime.date.today(),
         'DOWNLOADER_MIDDLEWARES':{
@@ -24,7 +24,7 @@ class ResidenceSpider(CrawlSpider):
         'ITEM_PIPELINES':{
            'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
-        'DOWNLOAD_DELAY': 0
+        'DOWNLOAD_DELAY': 0.02
     }
 
     def start_requests(self):
@@ -38,8 +38,7 @@ class ResidenceSpider(CrawlSpider):
             yield Request(
                 one_d['url'] + 'community/' + one_d['route'] + '/',
                 meta={'city': one_d['cn_name'], 'url': one_d['url']},
-                callback=self.get_residence_url,
-                dont_filter=True
+                callback=self.get_residence_url
             )
 
     def get_residence_url(self,response):
@@ -48,8 +47,7 @@ class ResidenceSpider(CrawlSpider):
             yield Request(
                 response.request.meta['url'] + url[1:-1] + '?from=Filter_1&hfilter=filterlist',
                 meta={'city': response.request.meta['city']},
-                callback=self.get_residence_info,
-                dont_filter=True
+                callback=self.get_residence_info
             )
 
         next_page_url = Selector(response).xpath('//*[@class="aNxt"]/@href').extract_first()
@@ -57,8 +55,7 @@ class ResidenceSpider(CrawlSpider):
             yield Request(
                 next_page_url,
                 meta={'city': response.request.meta['city'], 'url': response.request.meta['url']},
-                callback=self.get_residence_url,
-                dont_filter=True
+                callback=self.get_residence_url
             )
 
     def get_residence_info(self, response):
@@ -72,6 +69,8 @@ class ResidenceSpider(CrawlSpider):
 
         address = sr.xpath('//*[@class="sub-hd"]/text()').extract_first()
         item['address']           = address
+        item['lat']               = sr.re(r'lat : "([0-9.]{1,})"')[0]
+        item['lng']               = sr.re(r'lng : "([0-9.]{1,})"')[0]
 
         item['build_time']        = sr.xpath('//*[@id="basic-infos-box"]/dl/dd[5]/text()').extract_first()
         item['property_type']     = sr.xpath('//*[@id="basic-infos-box"]/dl/dd[1]/text()').extract_first()

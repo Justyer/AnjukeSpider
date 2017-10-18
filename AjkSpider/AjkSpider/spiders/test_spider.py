@@ -16,7 +16,7 @@ from AjkSpider.Exception import tryex
 class TestSpider(CrawlSpider):
     name = 'sys_test'
     start_urls = [
-        'https://beijing.anjuke.com/community/chaoyang/',
+        'https://beijing.anjuke.com/prop/view/A1002780223?from=filter-saleMetro&spread=filtersearch_p&position=59&kwtype=filter&now_time=1508215566',
     ]
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES':{
@@ -35,6 +35,6 @@ class TestSpider(CrawlSpider):
         )]
 
     def test_page(self, response):
-        urls = Selector(response).xpath('//*[@_soj="xqlb"]/@link').extract()
-        for url in urls:
-            print 'fuck:', url
+        sr = Selector(response)
+        st = sr.xpath('//*[@class="houseInfoV2-detail clearfix"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/p/text()[2]' % u'位置：').extract_first()
+        print 'st:', st.replace('\n', '').replace(' ', '')[1:]
