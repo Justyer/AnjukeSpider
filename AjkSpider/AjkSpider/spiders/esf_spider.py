@@ -16,23 +16,25 @@ class EsfSpider(CrawlSpider):
     start_urls = []
     custom_settings = {
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_esf_irt_%s.csv' % datetime.date.today(),
-        'LOG_FILE': '/usr/local/crawler/dxc/sh/ajk/ajk_esf_%s.log' % datetime.date.today(),
+        # 'LOG_FILE': '/usr/local/crawler/dxc/sh/ajk/ajk_esf_%s.log' % datetime.date.today(),
+        # 'LOG_FILE': '/mnt/d/workspace/www/ajk_esf_data/ajk_get_esf.log',
+        # 'FEED_URI': '/mnt/d/workspace/www/ajk_esf_data/ajk_esf_bj.csv',
         'DOWNLOADER_MIDDLEWARES':{
             # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
+        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
         # 'LOG_LEVEL': 'INFO',
-        'REDIRECT_ENABLED': False,
-        'DOWNLOAD_DELAY': 5
+        # 'REDIRECT_ENABLED': False,
+        'DOWNLOAD_DELAY': 6
     }
 
     def start_requests(self):
         id_esf_url = Mysql().query_by_sql('''
                         select co.route,ci.url
                         from t_web_ajk_community co,t_web_ajk_district di,t_web_ajk_city ci
-                        where di.id=co.district_id and di.city_id=ci.id
+                        where di.id=co.district_id and di.city_id=ci.id and ci.id=2
                     ''')
         for one in id_esf_url:
             yield Request(
@@ -73,11 +75,11 @@ class EsfSpider(CrawlSpider):
         rec = re.compile(r'\d+')
         fl = tryex.strip(sr.xpath('//*[@class="%s"]/div/dl/dt[text()="%s"]/following-sibling::*[1]/text()' % (v, u'楼层：')).extract_first()).split('(')
     	if len(fl) == 2:
-    		item['floor'] = fl[0]
-    		item['total_floor'] = rec.findall(fl[1])[0]
+            item['floor'] = fl[0]
+            item['total_floor'] = rec.findall(fl[1])[0]
         else:
-    		item['floor'] = None
-    		item['total_floor'] = None
+            item['floor'] = None
+            item['total_floor'] = rec.findall(fl[0])[0]
 
         num_and_date = sr.xpath('//*[@class="house-encode"]/text()').extract_first()
         nd_list = re.compile(r'\d+').findall(num_and_date)

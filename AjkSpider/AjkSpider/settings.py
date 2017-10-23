@@ -26,7 +26,7 @@ RETRY_TIMES = 25
 RETRY_HTTP_CODES = [500,502,503,504,408,302]
 
 # FEED_URI = '/mnt/d/workspace/www/AnjukeSpider/AjkSpider/district_ajk2.csv'
-# FEED_FORMAT = 'CSV'
+FEED_FORMAT = 'CSV'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
