@@ -17,24 +17,24 @@ class EsfSpider(CrawlSpider):
     custom_settings = {
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_esf_irt_%s.csv' % datetime.date.today(),
         # 'LOG_FILE': '/usr/local/crawler/dxc/sh/ajk/ajk_esf_%s.log' % datetime.date.today(),
-        # 'LOG_FILE': '/mnt/d/workspace/www/ajk_esf_data/ajk_get_esf.log',
-        # 'FEED_URI': '/mnt/d/workspace/www/ajk_esf_data/ajk_esf_bj.csv',
+        'LOG_FILE': '/mnt/d/workspace/www/ajk_esf_data/ajk_get_esf4-5.log',
+        'FEED_URI': '/mnt/d/workspace/www/ajk_esf_data/ajk_esf_cd_hf.csv',
         'DOWNLOADER_MIDDLEWARES':{
             # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
         #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
-        # 'LOG_LEVEL': 'INFO',
+        'LOG_LEVEL': 'INFO',
         # 'REDIRECT_ENABLED': False,
-        'DOWNLOAD_DELAY': 6
+        'DOWNLOAD_DELAY': 0
     }
 
     def start_requests(self):
         id_esf_url = Mysql().query_by_sql('''
                         select co.route,ci.url
                         from t_web_ajk_community co,t_web_ajk_district di,t_web_ajk_city ci
-                        where di.id=co.district_id and di.city_id=ci.id and ci.id=2
+                        where di.id=co.district_id and di.city_id=ci.id and (ci.id=4 or ci.id=5)
                     ''')
         for one in id_esf_url:
             yield Request(

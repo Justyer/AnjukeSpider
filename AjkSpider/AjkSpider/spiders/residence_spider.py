@@ -15,16 +15,16 @@ class ResidenceSpider(CrawlSpider):
     name = 'ajk_get_residence'
     start_urls = []
     custom_settings = {
-        'JOBDIR': '/mnt/d/workspace/www/crawls/just_maker2-2',
+        # 'JOBDIR': '/mnt/d/workspace/www/crawls/just_maker2-2',
         # 'FEED_URI': '/usr/local/crawler/dxc/common/ajk/data/ajk_residence_irt_%s.csv' % datetime.date.today(),
         # 'LOG_FILE': '/usr/local/crawler/dxc/common/ajk/logs/ajk_residence_irt_%s.log' % datetime.date.today(),
         'DOWNLOADER_MIDDLEWARES':{
             # 'AjkSpider.middlewares.ProxyMiddleware': 202,
         },
         'ITEM_PIPELINES':{
-           'AjkSpider.pipelines.InsertMysqlPipeline': 300,
+        #    'AjkSpider.pipelines.InsertMysqlPipeline': 300,
         },
-        'DOWNLOAD_DELAY': 0.02
+        'DOWNLOAD_DELAY': 1
     }
 
     def start_requests(self):
